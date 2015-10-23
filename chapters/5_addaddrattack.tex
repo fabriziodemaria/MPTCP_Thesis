@@ -1,4 +1,64 @@
-\section{Testbed}
+\section{User Mode Linux}
+In order to achieve a reliable reproduction of a real world scenario, the simulation included the setup of two User Mode Linux (UML) virtual machines running a Linux kernel with enabled support for MPTCP. These two machines will act as client and server, carrying on a MPTCP connection that will act upon. 
+Using UML to proceed with the experiments seemed to be the best way to go, allowing very fast setup and boot-up time, with good emulation of real machines and giving the possibility to work a on a single hosting machine with no risk to damage or crash its underlying kernel via our tests.
+
+A very good resource in terms of tool, configuration files and actual kernel images to be used out of the box is the official mptcp website:
+\textit{http://www.multipath-tcp.org/}. In particular, the website offers a python script that would download all the necessary files to run the two virtual machines. As for this specific purpose of verifying the ADD\_ADDR attack feasibility we won't need to act on the kernel source code, and we are able to use the above mentioned components out of the box. Actually, this is the best way to go, performing the attack on the official distribution currently offered by the official resources.
+
+
+Here it follows the content of the \textit{client.sh} script downloaded through the setup.py script retrieved from the official Web page (similar shell script can be found for the server counterpart, including a single interface configuration according to testing network definition):
+
+
+\begin{lstlisting}[language=bash, caption=\textit{client.sh}]
+#!/bin/bash
+
+USER=`whoami`
+
+sudo tunctl -u $USER -t tap0
+sudo tunctl -u $USER -t tap1
+
+sudo ifconfig tap0 10.1.1.1 netmask 255.255.255.0 up
+sudo ifconfig tap1 10.1.2.1 netmask 255.255.255.0 up
+
+sudo sysctl net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -s 10.0.0.0/8 ! -d 10.0.0.0/8 -j MASQUERADE
+
+sudo chmod 666 /dev/net/tun
+
+./vmlinux ubda=fs_client mem=256M umid=umlA eth0=tuntap,tap0 eth1=tuntap,tap1
+
+sudo tunctl -d tap0
+sudo tunctl -d tap1
+
+sudo iptables -t nat -D POSTROUTING -s 10.0.0.0/8 ! -d 10.0.0.0/8 -j MASQUERADE
+\end{lstlisting}
+
+With this code, it is possible to run the two UML machines and use the local \textit{tap} interfaces to sniff and inject packets (acting, in this specific case, as a physical man in the middle).
+
+The resulting network scenario will result as follows:
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=\textwidth]{Network_Scenario}
+\caption{Network scenario}
+\label{fig:networkscenario}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Scapy tool}
 \section{Results analysis}
 \section{Limitations and future work}
