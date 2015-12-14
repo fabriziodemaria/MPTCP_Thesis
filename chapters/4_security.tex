@@ -35,19 +35,38 @@ The effects of an attack over an MPTCP connection and the power that the attack 
 The rate of success of a certain attack over a MPTCP connection strongly depends on the specific requirements: two attacks falling in the same categories in terms of attacker eavesdrop capabilities and passive/active typologies might have rather different rates of success. For example, a certain kind of attack might require IP spoofing, thus being unfeasible in a network with ingress filtering [add reference].
 There are no general thresholds to define when an attack can be considered a real threat according to the success rate, but this is an important factor to be studied in an attack analysis.
 
-\section{MPTCP threats analysis}
-In this section are presented the residual threats under analysis by the IETF community at the time of writing. They all fall into two main kinds of attacks: flooding attacks and hijacking attacks. 
+\section{The ADD\_ADDR attack} \label{theaddaddrattack}
+\subsection{Concept}
+The ADD\_ADDR attack is a off-path active attack that exploit a major vulnerability in the initial MPTCP design. This vulnerability and its fix count for the most important analysis and value of this paper and the attached research/coding counterpart. This section analyses and describe the attack procedure in details, while the minor residual threats are briefly reported in the next section.
+
+\subsection{Execution}
+\subsection{Requirements}
+
+\section{MPTCP additional threats}
+In this section are presented the other residual threats under analysis by the IETF community at the time of writing. They all fall into two main kinds of attacks: flooding attacks and hijacking attacks. 
 
 Flooding attacks are Denial-of-Service procedures that aim at overloading an MPTCP host with connection requests in order to quickly consume its resources.
 Hijacking attacks aim at taking total control of the MPTCP session, thus being considered the ultimate example of those threats falling in the \textit{active attacks} category.
 
 \subsection{DoS attack on MP\_JOIN}
-This is 
+This kind of DoS attack would prevent hosts from creating new subflows. In order to be executed, the attacker has to know a valid token value of an existing MPTCP session. This 32-bit value can be eavesdropped or the attacker has to guess it.
 
+This attack exploits the fact that a host B receiving a SYN+MP\_JOIN message will create a state before answering with the SYN/ACK+MP\_JOIN packet. This means that some resources will be consumed at the host to keep in memory information regarding this connection request from the other party; in this way, when the host B receives the third ACK+MP\_JOIN packet, it can correctly associate it to the initial request and complete the handshake procedure. The creation of such state is required because there is no information in the ACK+MP\_JOIN packet that link it to the first SYN+MP\_JOIN request, so it is up to the host to remember all the ongoing requests.
+An attacker can exploit this by sending SYN+MP\_JOIN packets to a host without providing the final acknowledge packets. This can be done until the attacked host runs out of available spots for initiating additional subflows. The initial number of such available spots depends on the implementation and configuration at the host machine. 
 
-\section{The ADD\_ADDR attack} \label{theaddaddrattack}
-\subsection{Concept}
+This attack can be exploited to perform a typical TCP flooding attack. This is the perfect example of how MPTCP might introduce new vulnerabilities that might affect the underlying TCP protocol. 
+SYN flooding attacks for TCP have been studied for many years and current implementations use mitigation techniques like SYN cookies [reference] in order to allow stateless connection initiations. But each SYN+MP\_JOIN packet received at the host would trigger the creation of an associated state, while this is not the case for the attacker machine that can simply forge these packet in stateless manner. Exploiting this unbalance in resource utilisation is referred to as amplification attack.
 
-\subsection{Execution}
-\subsection{Requirements}
+A possible solution to this problem is to extend the MP\_JOIN option format to include the information required to identify a specific request throughout the 3-way handshake, without requiring hosts to create associated states.
+
+\subsection{Keys eavesdrop}
+An attacker can obtain the keys exchanged at the beginning of the MPTCP session, exploiting the fact that those are sent in clear. This is in fact a partial-time on-path eavesdropper attack, whose success would enable a vast set of attacking scenarios, even if the attacker itself has moved away from the session after sniffing the aforementioned keys.
+The keys associated to an MPTCP session are sensitive pieces of information, used to identify a specific connection at the hosts and used as keying material for all the HMAC computations in the protocol. With such pieces of information an attacker can potentially execute a connection hijacking. This problem is encountered again when analysing the ADD\_ADDR attack, section \ref{theaddaddrattack}.
+
+Possible solutions have been proposed to protect the keys, but these are outside the scope of this paper.
+
+\subsection{SYN/ACK attack}
+This is a partial-time on-path active attack. An attacker that can intercept and alter the MP\_JOIN packets is able to add any address it wants to the session. This is possible because there is no relation between the source addresses and the security material in the MP\_JOIN packets. But securing the source address in MP\_JOIN is not feasible if MPTCP is supposed to work through NATs: these middle-boxes operate exactly as described in this attack procedure. 
+
+Possible solutions have to reside on a different layer, perhaps securing the payload as a technique to limit the impact of such attack in a MPTCP session.
 
