@@ -1,7 +1,53 @@
-\section{Networking security overview}
-\section{MPTCP residual threats}
+\section{Protocol security evaluation}
+The MPTCP security mechanism was designed with the primary goal of being at least as good as the one currently available for plain TCP [RFC6181]. For this reason, official MPTCP documentation and analysis reports don't cover common threats currently affecting both TCP and MPTCP.
+
+The MPTCP key security requirements are [RFC6824bis]:
+\begin{itemize} 
+\item Provide a mechanism to confirm that the parties in a subflow handshake are the same as in the original connection setup.
+
+\item Provide verification that the peer can receive traffic at a new address before using it as part of a connection.
+
+\item Provide replay protection, i.e., ensure that a request to add/remove a subflow is 'fresh'.
+\end{itemize}
+
+MPTCP involves an extensive usage of hash-based handshake algorithms to achieve such required specifications, as described in \autoref{chap:theprotocoldesign}.
+
+Nevertheless, introducing the support of multiple addresses per endpoint in a single TCP connection does result in additional vulnerabilities compared to single-path TCP. These new vulnerabilities need proper investigation in order to determine which of them can be considered critical and might require modifications in the protocol in order to meet the required specifications.
+In order to classify how critical each specific threat is, it is a good starting point to define the various typologies of attack according to their requirements, rate of success and what power they can provide to the attacker.
+
+The general requirements for an attack to be executed might be grouped into the following categories:
+
+\begin{itemize}  
+\item \textit{Off-path attacker}: the attacker does not need to be located in any of the paths of the MPTCP connection at any time in order to execute the attack:
+\item \textit{Partial-time (time-shifted) on-path attacker}: the attacker has to be able to eavesdrop a specific set of information during the lifetime of the MPTCP connection in order to execute the attack. It doesn't need to eavesdrop the entire communication in between the hosts, and the specific direction and/or subflow for the sniffing procedure are attack specific.
+\item \textit{On-path attacker}: this attacker has to be on at least one of the paths during the entire lifetime of the MPTCP session in order to execute the attack.
+\end{itemize}
+
+We can clearly state that the critical case concerns off-path attacks, which do not require any eavesdrop procedure in order to be executed. In fact, on-path attacks are not considered part of the MPTCP work, since they allows for a significant number of attacks on regular TCP already. A primary goal in the design of MPTCP is not to introduce new ways to perform off-path attacks or time-shifted attacks.
+
+The effects of an attack over an MPTCP connection and the power that the attack can provide to the attacker can be divided into two main categories:
+
+\begin{itemize}  
+\item \textit{Passive attacker}: the attacker is able to capture some or all of the packets of the MPTCP session but it can't manipulate, drop or delay them, and it can't inject new packets in the current session either.
+\item \textit{Active attacker}: the attacker can pretend to be someone else, introduce new messages, delete existing messages, substitute one message for another, replay old messages, interrupt a communication’s channel, or alter stored information in a computer.
+\end{itemize}
+
+The rate of success of a certain attack over a MPTCP connection strongly depends on the specific requirements: two attacks falling in the same categories in terms of attacker eavesdrop capabilities and passive/active typologies might have rather different rates of success. For example, a certain kind of attack might require IP spoofing, thus being unfeasible in a network with ingress filtering [add reference].
+There are no general thresholds to define when an attack can be considered a real threat according to the success rate, but this is an important factor to be studied in an attack analysis.
+
+\section{MPTCP threats analysis}
+In this section are presented the residual threats under analysis by the IETF community at the time of writing. They all fall into two main kinds of attacks: flooding attacks and hijacking attacks. 
+
+Flooding attacks are Denial-of-Service procedures that aim at overloading an MPTCP host with connection requests in order to quickly consume its resources.
+Hijacking attacks aim at taking total control of the MPTCP session, thus being considered the ultimate example of those threats falling in the \textit{active attacks} category.
+
+\subsection{DoS attack on MP\_JOIN}
+This is 
+
+
 \section{The ADD\_ADDR attack} \label{theaddaddrattack}
 \subsection{Concept}
+
 \subsection{Execution}
 \subsection{Requirements}
 
