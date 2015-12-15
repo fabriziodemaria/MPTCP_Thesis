@@ -1,5 +1,5 @@
 \section{Protocol security evaluation}
-The MPTCP security mechanism was designed with the primary goal of being at least as good as the one currently available for plain TCP [RFC6181]. For this reason, official MPTCP documentation and analysis reports don't cover common threats currently affecting both TCP and MPTCP.
+The MPTCP security mechanism was designed with the primary goal of being at least as good as the one currently available for plain TCP [RFC6181]. For this reason, official MPTCP documentation and analysis reports don't cover common threats currently affecting both TCP and MPTCP, but the focus is confined to the new vulnerabilities introduced by the new protocol.
 
 The MPTCP key security requirements are [RFC6824bis]:
 \begin{itemize} 
@@ -10,16 +10,15 @@ The MPTCP key security requirements are [RFC6824bis]:
 \item Provide replay protection, i.e., ensure that a request to add/remove a subflow is 'fresh'.
 \end{itemize}
 
-MPTCP involves an extensive usage of hash-based handshake algorithms to achieve such required specifications, as described in \autoref{chap:theprotocoldesign}.
+MPTCP involves an extensive usage of hash-based handshake algorithms to achieve such required specifications, as described in \autoref{chap:theprotocoldesign}. Nevertheless, introducing the support of multiple addresses per endpoint in a single TCP connection does result in additional vulnerabilities compared to single-path TCP. These new vulnerabilities need proper investigation in order to determine which of them can be considered critical and might require modifications in the protocol design in order to meet the required specifications.
 
-Nevertheless, introducing the support of multiple addresses per endpoint in a single TCP connection does result in additional vulnerabilities compared to single-path TCP. These new vulnerabilities need proper investigation in order to determine which of them can be considered critical and might require modifications in the protocol in order to meet the required specifications.
-In order to classify how critical each specific threat is, it is a good starting point to define the various typologies of attack according to their requirements, rate of success and what power they can provide to the attacker.
+In order to classify how critical each security threat is, it is a good starting point to define the various typologies of attack according to their requirements, rate of success and what power they can provide to the attacker.
 
 The general requirements for an attack to be executed might be grouped into the following categories:
 
 \begin{itemize}  
-\item \textit{Off-path attacker}: the attacker does not need to be located in any of the paths of the MPTCP connection at any time in order to execute the attack:
-\item \textit{Partial-time (time-shifted) on-path attacker}: the attacker has to be able to eavesdrop a specific set of information during the lifetime of the MPTCP connection in order to execute the attack. It doesn't need to eavesdrop the entire communication in between the hosts, and the specific direction and/or subflow for the sniffing procedure are attack specific.
+\item \textit{Off-path attacker}: the attacker does not need to be located in any of the paths of the MPTCP connection at any time in order to execute the attack;
+\item \textit{Partial-time (time-shifted) on-path attacker}: the attacker has to be able to eavesdrop a specific set of information during the lifetime of the MPTCP connection in order to execute the attack. It doesn't need to eavesdrop the entire communication in between the hosts, and the specific direction and/or subflow for the sniffing procedure are attack specific;
 \item \textit{On-path attacker}: this attacker has to be on at least one of the paths during the entire lifetime of the MPTCP session in order to execute the attack.
 \end{itemize}
 
@@ -37,9 +36,36 @@ There are no general thresholds to define when an attack can be considered a rea
 
 \section{The ADD\_ADDR attack} \label{theaddaddrattack}
 \subsection{Concept}
-The ADD\_ADDR attack is a off-path active attack that exploit a major vulnerability in the initial MPTCP design. This vulnerability and its fix count for the most important analysis and value of this paper and the attached research/coding counterpart. This section analyses and describe the attack procedure in details, while the minor residual threats are briefly reported in the next section.
+This paper is mainly focused on studying and testing the ADD\_ADDR vulnerability, as well as providing an analysis of the commonly accepted fix and its implementation in Linux kernel. This section describes the attack procedure in details, while other minor residual threats are briefly reported in the next section.
 
-\subsection{Execution}
+The ADD\_ADDR attack is a \textit{off-path active attack} that exploits a major vulnerability in the initial MPTCP design [ref to RFC version 0]. As previously mentioned, the attacks falling into this category are usually the most critical and can easily jeopardize the protocol security requirements.
+With the current MPTCP model, an attacker can forge and inject an ADD\_ADDR message into an MPTCP session to achieve a complete hijacking of the connection placing itself as a man-in-the-middle. The culprit is indeed the format of the ADD\_ADDR option, whose behaviour will be changed with the new ADD\_ADDR2 for the very purpose of fixing this vulnerability.
+This vulnerability is entirely related to the MPTCP design, and due to its characteristics it is considered a blocking issue in the MPTCP progress towards Standard Track [7430].
+
+\subsection{Procedure}
+Here is reported the step-by-step procedure to carry out the ADD\_ADDR attack.
+Let's consider a scenario in which two machines, host A and host B, are communicating over an MPTCP session involving one or more subflows. The attacker is called host C and it is operating remotely with no eavesdrop capabilities. The attacker is using address IPC and targeting a single MPTCP subflow between host A (address IPA and port PA) and host B (address IPB and port B). The scenario is reported in figure \ref{fig:attack1}.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\textwidth]{Attack1}
+\caption{Attack scenario}
+\label{fig:attack1}
+\end{figure}
+
+The first step performed by the attacker is to forge an ADD\_ADDR message as follows: it is an ACK TCP packet with source address IPA, destination address IPB and the advertised address in the ADD\_ADDR option is IPC. The ADD\_ADDR option also contains the \textit{Address ID} field, that the attacker can set to a number high enough in order not to collide with existing identifiers for the ongoing subflows between hosts A and B. For the format of the ADD\_ADDR option and the MP\_JOIN options mentioned in the following step, refer to the protocol design in chapter \ref{chap:theprotocoldesign}.
+The forged packet is then sent to host B.
+
+Host B will process the forged packet as a legit request by host A of advertising a new available interface with address IPC. This most likely triggered the creation of a new subflow towards the new IP address, meaning that host B sends a SYN+MP\_JOIN packet to the attacker. This packet contains all the security material needed in the first phase of the MP\_JOIN three-way handshake, and the attacker does NOT need to operate over that portion of data. Attacker C simply manipulate the SYN+MP\_JOIN packet by changing the source IP to IPC and the destination IP to IPA, forwarding the new packet to host A.
+
+Host A will process the manipulated packet as a legit request by host B of starting a new subflow from host B's new available interface with address IPC. All the required information is present in the MP\_JOIN option, like the token of host A that identifies the specific MPTCP session to which attach the new subflow to. Host A computes all the needed parameters (like a valid HMAC value), generate the SYN/ACK+MP\_JOIN packet and send it to IPC. The attacker, similarly to the previous steps, manipulate the IP addresses by changing the source endpoint from IPA to IPC and the destination endpoint from IPC to IPB. St this point, attacker C sends the manipulated packet to host B.
+
+All the parameters in the packet looks legit to host B, which replies with an ACK+MP\_JOIN packet to attacker C. The attacker changes the source address to IPC and the destination address to IPA and sends the modified packet to host A. Upon acknowledge reception, host A will verify all the parameters in the packet (which will be correct since properly calculated by host B), and create a new subflow towards IPC. At this point the attacker has managed to place itself as man-in-the-middle. 
+
+As a further, optional step, the attacker can send RST packets to the other subflow in order to close them thus being able to perform a full hijack of the MPTCP session between host A and host B. The attacker can now operate upon the connection in any possible way, modifying, delaying, dropping, forging packets between the two parties.
+
+It is clear that the entire procedure is made possible due to the way ADD\_ADDR works, which enables the vulnerability and the relatively straightforward procedure to complete the hijack. Albeit there are some important requirements and limitations that consistently limit the rate of success of such attack, which are discussed in the following section.
+
 \subsection{Requirements}
 
 \section{MPTCP additional threats}
