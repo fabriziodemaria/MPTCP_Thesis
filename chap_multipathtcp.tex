@@ -1,0 +1,26 @@
+\chapter{Multipath TCP}
+\label{chap:multipathtcp}
+
+From now on the discussion becomes more technical. This chapter is all about how MPTCP works (without referring to a specific implementation).
+
+\section{Transmission Control Protocol (TCP)}
+Introduction of TCP and how this old, established protocol works. This is a good starting point from where the MPTCP extension discussion can start (in the next section).
+
+\section{Extending TCP to MultiPath TCP}
+How MPTCP is added on top of TCP (with all the related design aspects) is reported here. This is the first portion of the thesis containing a more in-depth description of the protocol. This part might follow closely the introductory portions of the RFC documents regarding MPTCP.
+
+\subsection{Control Plane}
+All the MPTCP options used to manage MPTCP sessions are reported and explained here, including all the details on how to set a new session and add/remove subflows.
+
+\subsection{Data Plane}
+This part concerns all the MPTCP options used to manage the data flow in a MPTCP session, including how the byte stream is subdivided into different subflow and how the original order of the packets is provided at the receiver.
+
+\section{MPTCP Deployment}
+\subsection{Middleboxes Compatibility}
+This section will be quite technical and it is supposed to list the most important middle-boxes and their impact/effect on a MPTCP connection. These boxes include NATs, proxies and firewalls. This part should clearly state why MPTCP widespread adoption is a big challenge.
+
+\subsection{Implementations}
+Despite the previously described problematics, MPTCP is a big bet in the IETF community and many implementations have been developed for the most common OSes, listed in this section (with some history notions).
+
+\subsection{Deployment Status}
+It should be interesting for the reader to go through some examples of real world's scenarios in which MPTCP is used successfully. Here it is possible to cite some important achievements related to MPTCP (for example the highest throughput ever reached with the new protocol).

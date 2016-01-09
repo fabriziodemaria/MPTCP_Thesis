@@ -1,0 +1,253 @@
+\documentclass[11pt,english]{toptesi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc} %utf8
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{blindtext}
+\usepackage{graphicx,wrapfig}
+\usepackage{booktabs}
+\usepackage{lmodern}
+\usepackage{varioref}
+\usepackage{url}
+\usepackage{array}
+\usepackage{paralist}{\obeyspaces\global\let =\space}
+\usepackage{verbatim} 
+\usepackage{subfig}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage[pass]{geometry}
+\usepackage[figuresright]{rotating}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+\usepackage[babel]{csquotes}
+\usepackage{hyperref}
+\usepackage[backend=bibtex]{biblatex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% CONFIGURAZIONE LINK E RIFERIMENTI
+\hypersetup{%
+    pdfpagemode={UseOutlines},
+    bookmarksopen,
+    pdfstartview={FitH},
+    colorlinks,
+    linkcolor={black}, %COLORE DEI RIFERIMENTI AL TESTO
+    citecolor={blue}, %COLORE DEI RIFERIMENTI ALLE CITAZIONI
+    urlcolor={blue} %COLORI DEGLI URL
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% CONFIGURAZIONE LISTATI/CODICE - CANCELLARE SE NON NECESSARIO
+% PYTHON - BIANCO E NERO
+\lstset{%
+	captionpos=b,
+	language=Python,
+	basicstyle =\small\ttfamily,
+	keywordstyle=\color{black}\bfseries,
+	breaklines=true,
+	breakatwhitespace=true,
+	frame=lines,
+	numbers=left,
+	numberstyle=\footnotesize,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%DEFINIZIONE SEZIONI IN NUMERAZIONE ROMANA
+%ELENCO DEI LISTATI/CODICI
+\makeatletter
+\newcommand\listofcodes{%
+ \iffrontmatter\else\frontmattertrue\fi
+ \if@openright\cleardoublepage\else\clearpage\fi
+ % change the meaning of \chapter in a group
+ \begingroup\def\chapter##1{\@schapter}
+ \phantomsection % for the hyperlink
+ \lstlistoflistings 
+ \endgroup
+} 
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% INFORMAZIONI PDF - PERSONALIZZARE
+\pdfinfo{%
+  /Title    (MPTCP Security Evaluation)
+  /Author   (Fabrizio Demaria)
+  /Subject  (Analysing and fixing critical MPTCP vulnerabilities, contributing to the Linux kernel implementation of the protocol)
+  /Keywords (MPTCP Security)
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FRONTESPIZIO - PERSONALIZZARE
+% ELIMINATE LE VOCI CHE NON VI SERVONO
+
+% UNIVERSITA - NOME
+\ateneo{Politecnico di Torino / Stockholm's KTH}
+
+% FACOLTA - DICITURA
+\FacoltaDi{Faculty of }
+% FACOLTA - NOME
+\facolta{Engineering}
+
+% CORSO DI LAUREA - DICITURA (MANTENERE LO SPAZIO)
+\CorsoDiLaureaIn{Master of Science in }
+% CORSO DI LAUREA - NOME
+\corsodilaurea{Computer Science}
+
+% TIPOLOGIA TESI
+\TesiDiLaurea{Master Thesis}
+
+% TITOLO
+\titolo{MPTCP Security Evaluation}
+
+% SOTTOTITOLO
+\sottotitolo{Analysing and fixing critical MPTCP vulnerabilities, contributing to the Linux kernel implementation of the protocol}
+
+% RELATORE/I - DICITURA
+\AdvisorName{Advisors}
+% RELATORE - PROF. NOME E COGNOME
+\relatore{prof.\ Antonio Lioy}
+% RELATORE AGGIUNTIVO - PROF NOME E COGNOME
+% SE SI HA SOLO UN RELATORE ELIMINARE E CAMBIARE Advisors in Advisor
+\secondorelatore{prof.\ Peter Sjödin}
+
+% TUTORE AZIENDALE - TITOLO NOME E COGNOME
+\tutoreaziendale{Henrik Svensson\\Joakim Nordell\\Shujuan Chen}
+% TUTORE AZIENDALE - DICITURA//AZIENDA
+\NomeTutoreAziendale{Company tutors\\Intel Corporation Inc}
+
+% CANDIDATO - DICITURA (MANTENERE I DUE PUNTI)
+\CandidateName{Candidate:}
+% SECONDO CANDIDATO - ELIMINARE O DECOMMENTARE
+%secondocandidato{Bombo de Bombis}
+
+% CANDIDATO - NOME E COGNOME
+\candidato{Fabrizio Demaria}
+
+% LOGO UNIVERSITA
+\logosede{images/logo}
+
+% DATA - MESE ANNO
+\sedutadilaurea{March 2016}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% LISTA DEI CAPITOLI DA INCLUDERE - PERSONALIZZARE
+\includeonly{%
+chap_introduction,%
+chap_multipathtcp,%
+chap_mptcpsecurity,%
+chap_addaddrattackexecution,%
+chap_addaddr2,%
+chap_conclusions,%
+app_a,%
+}
+
+% FILE DI BIBLIOGRAFIA
+\bibliography{bibliography} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% INIZIO DOCUMENTO
+\begin{document}
+\english
+
+\frontespizio
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%INTERLINEA - DEFAULT 1
+%\interlinea{1.2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frontmatter
+
+% DEDICA - PERSONALIZZARE
+% VSPACE - PROPORZIONE USATA PER CENTRATURA VERTICALE DEL TESTO
+% FLUSHRIGHT - ALLINEAMENTO ORIZZONTALE A DESTRA
+%\vspace*{\stretch{1}}
+%\begin{flushright}
+%\noindent
+%To...
+%\end{flushright}
+%\vspace*{\stretch{6}}
+%\cleardoublepage
+
+% CITAZIONE - PERSONALIZZARE
+% VSPACE - PROPORZIONE USATA PER CENTRATURA VERTICALE DEL TESTO
+% FLUSHRIGHT - ALLINEAMENTO ORIZZONTALE A DESTRA
+%\vspace*{\stretch{1}}
+%\begin{flushright}
+%\noindent
+%Citation
+
+%\textit{cit.}
+%\end{flushright}
+%\vspace*{\stretch{6}}
+%\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% RINGRAZIAMENTI - PERSONALIZZARE
+\ringraziamenti
+Thanks to...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ABSTRACT - PERSONALIZZARE
+\sommario
+Abstract goes here...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% INDICI - ELIMINARE GLI INDICI NON NECESSARI
+
+% INDICE GENERALE
+\tableofcontents
+
+% INDICE DELLE FIGURE
+%\listoffigures
+
+% INDICE DELLE TABELLE
+%\listoftables
+
+% INDICE DEI CODICI
+%\listofcodes
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mainmatter
+
+% INCLUSIONE FILE CAPITOLI - PERSONALIZZARE - TENERE COERENTE CON LISTA IN ALTO
+\include{chap_introduction}
+\include{chap_multipathtcp}
+\include{chap_mptcpsecurity}
+\include{chap_addaddrattackexecution}
+\include{chap_addaddr2}
+\include{chap_conclusions}
+
+\appendix
+% INCLUSIONE APPENDICI - - PERSONALIZZARE - TENERE COERENTE CON LISTA IN ALTO
+\include{app_a}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% BIBLIOGRAFIA
+\addcontentsline{toc}{chapter}{\refname}
+\nocite{*}
+\printbibliography
+
+\end{document}

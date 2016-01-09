@@ -1,0 +1,19 @@
+\chapter{ADD\_ADDR Attack Execution}
+\label{chap:addaddrattackexecution}
+
+Since the first part of the thesis work has been devoted to build the attacking tool to reproduce the exploitation of the ADD\_ADDR vulnerability, an entire chapter is dedicated to this topic.
+
+\section{Environment Setup}
+Here it will be explained what UML virtual machines are and why they were good candidates for the simulation tests. The setup procedure is also reported here, with graphs to visually show the simulation's network scenario. The Scapy tool is also presented here. This was a great program to manipulate and forge packets.
+
+\section{Attack Script}
+This part is supposed to explain how the Scapy attacking script actually replicates all the steps needed to execute the ADD\_ADDR attack. The steps were explained from a theoretical point of view in the previous chapter. Some code snippets of the attacking script can be present in this section.
+Some details on the problems encountered in building the script and how they have been solved can be valuable material, too.
+
+\section{Reproducing the Attack}
+This section is a step-by-step tutorial on how to call the attack script and reproduce the attack. It mainly contains the README file in the GitHub repository where the script can be retrieved.
+Screenshots and/or Whireshark output can be added to show the actual behaviour of the attack over a netcat connection.
+
+\section{Conclusions} 
+A final evaluation of the experiment is needed. First, it is important to emphasize the limitations of the adopted tool and how this simulation differs with respect to real scenarios. Nevertheless, it is crucial to explain the value of such experiment, that indeed proves the feasibility of the ADD\_ADDR attack and better justify the development of a fix, which is the main topic of the next chapter.
+

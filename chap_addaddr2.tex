@@ -1,0 +1,29 @@
+\chapter{ADD\_ADDR2}
+\label{chap:addaddr2}
+
+This chapter is related to the actual work and original contribution performed during the Master Thesis work at Intel. The ADD\_ADDR2 option is developed and added to the current MPTCP implementation for the Linux kernel in order to fix the vulnerability.
+
+\section{The ADD\_ADDR2 format}
+The actual new format and the reasons why it fixes the vulnerability of ADD\_ADDR are reported here. Various discussions can be added to explain why this is believed to be the best way to fix the problem. This part doesn't include any implementation details and/or code snippets.
+
+\section{Implementing ADD\_ADDR2}
+An introductory section that shows the main architectural aspects of how MPTCP has been merged into the TCP code and the TCP modules inside the kernel.
+Here it starts the part with all the details and work related to the implementation of ADD\_ADDR2 in the kernel. Code snippets have to be added here. The following subsections are the side issues and side features that have been elaborated during the thesis work.
+
+\subsection{Retro-compatibility}
+Version control mechanism was not present but it is needed to negotiate which format to use in a MPTCP session: ADD\_ADDR or ADD\_ADDR2.
+
+\subsection{Port Advertisement}
+Port advertisement in ADD\_ADDR is possible according to RFC specifications but it was not part of the implementation at the beginning of the thesis work, so it has been added.
+
+\subsection{IPv6 Considerations}
+Longer addresses brought some issues related to TCP option fields limitations.
+
+\subsection{Crypto-API in MPTCP}
+A major problem was how to deal with the new hashing requirements introduced by ADD\_ADDR2. Extending the current MPTCP hashing function to deal with input messages of arbitrary size is a first point to explain. The second part has to deal with the whole analysis related to adopting the kernel CRYPTO APIs to calculate the HMAC values in MPTCP and why this is not advisable.
+
+\section{RFC Contributions}
+Another minor part of the thesis work on MPTCP is related to some small contributions to the official RFC documentation.
+
+\section{Experimental Evaluation}
+This part should include performance analysis regarding the new format introduced with ADD\_ADDR2. A discussion on how the new format (and all the other modifications introduced with the patches) could impact any aspect of the protocol should be present in this section. At the moment, no data has been produced that might be a good candidate for this section.

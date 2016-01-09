@@ -1,0 +1,17 @@
+\chapter{Introduction}
+\label{chap:introduction}
+
+The introductory part is going to cover MPTCP from a general perspective, taking into consideration all the possible ways to take advantage of the new protocol and all the improvements (benefits) observable by the end users with respect to the old, common TCP. Problem statement and thesis' objectives follow.
+
+\section{Motivation}
+This section would start with a general introduction of the interconnected world of today, discussing how hardware and software communication has changed in the last decade. The focus of this part is to bring up the multihoming and multipath reality of the infrastructures of today and how this led almost naturally to the MultipathTCP project. It would be good to cite similar technologies developed before MPTCP (for example SCTP), explaining in which aspects of MPTCP is supposed to be a better option.
+This should include an overview of the real benefits that can be achieved by adopting MPTCP in common appliances (smartphones for example) as well as modern datacenters. It would be good to explain the fact that MPTCP was designed to be as retrocompatible as possible with current infrastructure (lower layer) and applications (higher layer); this is a good way to introduce the next section, where compatibility issues are presented.
+
+\section{Problem Statement}
+After a general introduction of the protocol, here it follows the problem statement related to this thesis .
+This part should show the context of the overall content, namely the security analysis of MPTCP and the specific case of the ADD\_ADDR attack, considered a blocking issue in the upstreaming process of the MPTCP implementation.
+This section should contain the objectives of the thesis: primarily fixing the ADD\_ADDR vulnerability of the protocol, developing effective and powerful simulation scenarios in order to easily test MPTCP by using UML and Scapy and finally contributing to the upstreaming of the protocol into the Linux kernel by developing patches and improving official RFC documentation.
+
+\section{Methodology}
+This section should contain a short road map containing the various step taken to fix the problems and the general methodology adopted, using a top-down approach.
+Perhaps, it is possible to cite here the working environment and the parties involved. This section might also contain an explanation of the structure of the text.
